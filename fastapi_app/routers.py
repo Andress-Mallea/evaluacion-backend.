@@ -20,10 +20,6 @@ def get_restaurant_service(
 ) -> RestaurantService:
     return RestaurantService(repo, cache)
 
-# ==========================================================
-# RUTAS ORIGINALES DEL EXAMEN (Mantienen los Tests en Verde)
-# ==========================================================
-
 @router.get("/reservations/upcoming", response_model=List[ReservationDetailResponse])
 async def get_upcoming_reservations(
     window_hours: int = Query(48, ge=1, le=168),
@@ -43,23 +39,15 @@ async def check_availability(
     except ValueError as e:
         raise HTTPException(status_code=404, detail=str(e))
 
-# ==========================================================
-# NUEVAS RUTAS ADAPTADORAS (Satisfacen el Contrato de app.js)
-# ==========================================================
-
-# 1. Healthcheck exigido por el footer de la página web
 @router.get("/healthz")
 async def frontend_healthz():
     return {"status": "ok"}
 
-# 2. Selector de Tipos de Mesa (Filtro del formulario)
 @router.get("/tables/types/")
 async def get_frontend_table_types(request: Request):
-    # Nos conectamos a la BD para traer los tipos de mesa reales
     async with request.app.state.db_pool.acquire() as conn:
         rows = await conn.fetch("SELECT id, name, capacity FROM content.table_type")
         
-        # Formateamos los datos tal como los pide el app.js del frontend
         return [
             {
                 "id": str(row["id"]), 
@@ -69,7 +57,6 @@ async def get_frontend_table_types(request: Request):
             for row in rows
         ]
 
-# 3. Renderizado del Menú del Día
 @router.get("/menu/")
 async def get_frontend_menu(date: date_type = Query(...)):
     return [
@@ -89,10 +76,10 @@ async def get_frontend_menu(date: date_type = Query(...)):
         }
     ]
 
-# 4. Buscador Visual de Disponibilidad (El motor de la UI)
+
 @router.get("/reservations/availability/")
 async def get_frontend_availability(
-    request: Request, # Agregamos request para poder consultar la BD si es necesario
+    request: Request, 
     date: date_type = Query(...),
     party: int = Query(...),
     time: Optional[str] = Query("19:00"),
@@ -103,12 +90,12 @@ async def get_frontend_availability(
     try:
         uuid_to_check = table_type
         
-        # Si el usuario selecciona "Any" en el frontend, tomamos el primer ID real de la BD
+   
         if not uuid_to_check:
             async with request.app.state.db_pool.acquire() as conn:
                 first_table = await conn.fetchrow("SELECT id FROM content.table_type LIMIT 1")
                 if not first_table:
-                    return [] # No hay mesas registradas
+                    return [] 
                 uuid_to_check = str(first_table["id"])
                 
         target_time = datetime.combine(date, datetime.strptime(time, "%H:%M").time())

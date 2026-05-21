@@ -2,8 +2,6 @@ import pytest
 from datetime import datetime
 import zoneinfo
 
-# --- PRUEBAS DE LA LÓGICA 1: CONTROL DE CAPACIDAD ---
-
 @pytest.mark.asyncio
 async def test_check_table_availability_success(restaurant_service):
     """Valida el cálculo correcto de mesas disponibles (10 totales - 4 ocupadas = 6)"""
@@ -27,8 +25,6 @@ async def test_check_table_availability_not_found(restaurant_service):
             target_time=datetime.now()
         )
 
-# --- PRUEBAS DE LA LÓGICA 2: VENTANA DE TIEMPO Y TIMEZONES ---
-
 @pytest.mark.asyncio
 async def test_get_upcoming_reservations_valid_timezone(restaurant_service, mock_repo):
     """Prueba el flujo feliz convirtiendo el huso horario de Bolivia a rangos UTC"""
@@ -43,6 +39,6 @@ async def test_get_upcoming_reservations_valid_timezone(restaurant_service, mock
 @pytest.mark.asyncio
 async def test_get_upcoming_reservations_invalid_timezone_fallback(restaurant_service):
     """Caso de Borde Exigido: Si el Timezone es inválido, debe aplicar Fallback a UTC sin colapsar"""
-    # Si sobrevive y ejecuta la consulta usando UTC como respaldo, la prueba pasa con éxito
+
     records = await restaurant_service.get_upcoming_reservations(window_hours=24, tz_name="Zona/Inexistente_Bolivia")
     assert isinstance(records, list)

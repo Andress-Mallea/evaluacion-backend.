@@ -16,5 +16,5 @@ COPY . .
 
 EXPOSE 8080
 
-# Comando de producción exigido por la rúbrica [cite: 882]
+
 ENTRYPOINT ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8080", "--workers", "4"]

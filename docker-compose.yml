@@ -27,9 +27,9 @@ services:
       - .env
     depends_on:
       db:
-        condition: service_healthy # Espera a que la BD esté lista
+        condition: service_healthy 
     volumes:
-      - django_static:/app/static # Volumen compartido para Nginx
+      - django_static:/app/static 
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8000/healthz"]
       interval: 10s
@@ -57,12 +57,12 @@ services:
       - "80:80"
     depends_on:
       django-app:
-        condition: service_started  # <-- CAMBIA A STARTED PARA EVITAR EL BLOQUEO
+        condition: service_started  
       fastapi-app:
-        condition: service_started  # <-- CAMBIA A STARTED PARA EVITAR EL BLOQUEO
+        condition: service_started  
     volumes:
       - ./nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
-      - ./frontends/reservations:/usr/share/nginx/html:ro  # <-- ¡Corregido aquí!
+      - ./frontends/reservations:/usr/share/nginx/html:ro 
       - django_static:/app/static:ro
 
 volumes:

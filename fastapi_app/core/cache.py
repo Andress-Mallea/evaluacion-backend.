@@ -7,7 +7,6 @@ class RedisCache(CacheInterface):
         self.client = redis_client
 
     async def get(self, key: str) -> Optional[str]:
-        # El método read-only asíncrono
         data = await self.client.get(key)
         return data.decode('utf-8') if data else None
 

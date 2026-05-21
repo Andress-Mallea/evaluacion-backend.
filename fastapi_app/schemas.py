@@ -3,12 +3,11 @@ from uuid import UUID
 from datetime import datetime
 from typing import List, Optional
 
-# --- Esquemas existentes ---
 class RestaurantListResponse(BaseModel):
     id: UUID
     name: str
 
-# --- Nuevos Esquemas para las Lógicas de Negocio ---
+
 class CapacityCheckResponse(BaseModel):
     table_type_id: UUID
     table_type_name: str

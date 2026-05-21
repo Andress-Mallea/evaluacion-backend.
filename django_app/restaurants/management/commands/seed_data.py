@@ -13,12 +13,12 @@ class Command(BaseCommand):
 
         self.stdout.write('Generando registros de prueba masivos...')
         
-        # 1. Crear 300 Restaurantes
+  
         restaurants = [Restaurant(name=f"Restaurante Gourmet {i}") for i in range(1, 301)]
         Restaurant.objects.bulk_create(restaurants)
         db_restaurants = Restaurant.objects.all()
 
-        # 2. Crear Tipos de Mesas y Menús por cada uno
+      
         table_types_to_create = []
         menu_items_to_create = []
         
@@ -32,11 +32,11 @@ class Command(BaseCommand):
         TableType.objects.bulk_create(table_types_to_create)
         MenuItem.objects.bulk_create(menu_items_to_create)
 
-        # 3. Crear Reservas de demostración masivas
+       
         db_table_types = TableType.objects.all()
         reservations_to_create = []
         
-        # Tomamos una muestra para crear las primeras 500 reservas distribuidas
+       
         for _ in range(500):
             tt = random.choice(db_table_types)
             reservations_to_create.append(

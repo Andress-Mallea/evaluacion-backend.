@@ -3,7 +3,6 @@ import redis.asyncio as redis
 from fastapi import FastAPI, Response
 from routers import router
 
-# A Nginx no le quitamos el prefijo, se lo ponemos explícitamente a Swagger
 app = FastAPI(
     title="API de Restaurantes Examen", 
     docs_url="/api/openapi",        
@@ -32,5 +31,4 @@ async def healthz(response: Response):
         response.status_code = 503
         return {"status": "unhealthy", "reason": "db error"}
 
-# Le ponemos el prefijo a las lógicas de negocio
 app.include_router(router, prefix="/api/v1")

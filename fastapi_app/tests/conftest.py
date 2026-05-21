@@ -4,7 +4,6 @@ from typing import List, Optional
 from core.interfaces import RestaurantRepositoryInterface, CacheInterface
 from services import RestaurantService
 
-# 1. Mock de la Capa de Persistencia (Postgres)
 class MockRestaurantRepository(RestaurantRepositoryInterface):
     def __init__(self):
         self.reservations = []
@@ -25,13 +24,13 @@ class MockRestaurantRepository(RestaurantRepositoryInterface):
         return self.table_details
 
     async def count_occupied_tables(self, table_type_id: str, start: datetime, end: datetime) -> int:
-        # Simulamos que hay 4 mesas ocupadas concurrentemente para el test matemático
+
         return 4
 
     async def get_reservations_in_window(self, start_time: datetime, end_time: datetime) -> List[dict]:
         return self.reservations
 
-# 2. Mock de la Capa de Infraestructura de Caché (Redis)
+
 class MockCache(CacheInterface):
     def __init__(self):
         self.store = {}
@@ -47,7 +46,6 @@ class MockCache(CacheInterface):
             raise Exception("Redis connection lost")
         self.store[key] = value
 
-# 3. Fixtures de Pytest para inyectar en las pruebas
 @pytest.fixture
 def mock_repo():
     return MockRestaurantRepository()

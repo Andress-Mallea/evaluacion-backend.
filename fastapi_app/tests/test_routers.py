@@ -4,14 +4,14 @@ from main import app
 from routers import get_repo, get_cache
 from tests.conftest import MockRestaurantRepository, MockCache
 
-# 1. Aplicamos Inversión de Dependencias (SOLID):
+
 app.dependency_overrides[get_repo] = lambda: MockRestaurantRepository()
 app.dependency_overrides[get_cache] = lambda: MockCache()
 
 @pytest.mark.asyncio
 async def test_get_upcoming_reservations_endpoint():
     """Valida que la ruta de reservas responda un 200 OK y el JSON correcto"""
-    # Nueva sintaxis requerida por httpx usando ASGITransport
+
     async with AsyncClient(transport=ASGITransport(app=app), base_url="http://testserver") as ac:
         response = await ac.get("/api/v1/reservations/upcoming?window_hours=48&timezone=America/La_Paz")
         

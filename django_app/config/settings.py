@@ -4,7 +4,7 @@ from pathlib import Path
 BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'fallback-key')
 DEBUG = os.environ.get('DJANGO_DEBUG', 'False') == 'True'
-ALLOWED_HOSTS = ['*'] # Nginx se encarga del filtrado externo
+ALLOWED_HOSTS = ['*'] 
 ROOT_URLCONF = 'config.urls'
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -13,22 +13,22 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'restaurants',  # <-- Aseguramos que tu app del examen esté activa
+    'restaurants',  
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'django.contrib.sessions.middleware.SessionMiddleware',  # ¡De primero!
+    'django.contrib.sessions.middleware.SessionMiddleware', 
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',  # ¡Después de session!
+    'django.contrib.auth.middleware.AuthenticationMiddleware', 
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
 TEMPLATES = [
     {
-        'BACKEND': 'django.template.backends.django.DjangoTemplates',  # <-- Requerido por admin.E403
+        'BACKEND': 'django.template.backends.django.DjangoTemplates',  
         'DIRS': [],
         'APP_DIRS': True,
         'OPTIONS': {
@@ -42,7 +42,6 @@ TEMPLATES = [
     },
 ]
 
-# ... Configuraciones de Middleware y Templates estándar de Django ...
 
 DATABASES = {
     'default': {
@@ -53,7 +52,6 @@ DATABASES = {
         'HOST': os.environ.get('POSTGRES_HOST'),
         'PORT': os.environ.get('POSTGRES_PORT'),
         'OPTIONS': {
-            # Forzar la escritura en el esquema content de Postgres
             'options': '-c search_path=public,content'
         }
     }

@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+
 """Utility script for Django's command-line tasks."""
 import os
 import sys

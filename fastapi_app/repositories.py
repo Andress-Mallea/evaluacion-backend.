@@ -6,9 +6,6 @@ from core.interfaces import RestaurantRepositoryInterface
 class PostgresRestaurantRepository(RestaurantRepositoryInterface):
     def __init__(self, pool: asyncpg.Pool):
         self.pool = pool
-
-    # ... (Mantener métodos anteriores: get_all_restaurants, get_restaurant_by_id, search_restaurants) ...
-
     async def get_table_type_details(self, table_type_id: str) -> Optional[dict]:
         async with self.pool.acquire() as conn:
             query = 'SELECT id, name, capacity, restaurant_id FROM content.table_type WHERE id = $1'
@@ -17,7 +14,6 @@ class PostgresRestaurantRepository(RestaurantRepositoryInterface):
 
     async def count_occupied_tables(self, table_type_id: str, time_window_start: datetime, time_window_end: datetime) -> int:
         async with self.pool.acquire() as conn:
-            # Cuenta cuántas reservas activas ("confirmed") colisionan en ese rango de tiempo
             query = """
                 SELECT COUNT(*) FROM content.reservation 
                 WHERE table_type_id = $1 
@@ -30,7 +26,6 @@ class PostgresRestaurantRepository(RestaurantRepositoryInterface):
 
     async def get_reservations_in_window(self, start_time: datetime, end_time: datetime) -> List[dict]:
         async with self.pool.acquire() as conn:
-            # Consulta relacional con JOINs manuales para traer datos hijos
             query = """
                 SELECT 
                     r.id, r.reservation_time, r.status,
