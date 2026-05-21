@@ -2,18 +2,20 @@ import asyncpg
 import redis.asyncio as redis
 from fastapi import FastAPI, Response
 from routers import router
-from config import settings
 
-app = FastAPI(title="Public API Startup", docs_url="/api/openapi")
+# A Nginx no le quitamos el prefijo, se lo ponemos explícitamente a Swagger
+app = FastAPI(
+    title="API de Restaurantes Examen", 
+    docs_url="/api/openapi",        
+    openapi_url="/api/openapi.json" 
+)
 
 @app.on_event("startup")
 async def startup():
-    # Pool de Conexiones asíncronas Postgres
     app.state.db_pool = await asyncpg.create_pool(
-        dsn=f"postgres://{settings.POSTGRES_USER}:{settings.POSTGRES_PASSWORD}@{settings.POSTGRES_HOST}:{settings.POSTGRES_PORT}/{settings.POSTGRES_DB}"
+        dsn="postgres://app_user:secure_password_here@db:5432/restaurant_db"
     )
-    # Cliente asíncrono Redis
-    app.state.redis_client = redis.from_url(settings.REDIS_URL)
+    app.state.redis_client = redis.from_url("redis://redis:6379/0")
 
 @app.on_event("shutdown")
 async def shutdown():
@@ -28,6 +30,7 @@ async def healthz(response: Response):
         return {"status": "healthy"}
     except Exception:
         response.status_code = 503
-        return {"status": "unhealthy", "reason": "database connectivity issues"}
+        return {"status": "unhealthy", "reason": "db error"}
 
-app.include_router(router)
+# Le ponemos el prefijo a las lógicas de negocio
+app.include_router(router, prefix="/api/v1")
