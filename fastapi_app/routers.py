@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, Query, Request
+from fastapi import APIRouter, Depends, Query, Request, HTTPException
 from typing import List
 from datetime import datetime
 from schemas import CapacityCheckResponse, ReservationDetailResponse
@@ -20,10 +20,6 @@ def get_restaurant_service(
 ) -> RestaurantService:
     return RestaurantService(repo, cache)
 
-# ---------------------------------------------------------
-# ¡ESTAS RUTAS FALTABAN! AQUÍ CONECTAMOS LA LÓGICA
-# ---------------------------------------------------------
-
 @router.get("/reservations/upcoming", response_model=List[ReservationDetailResponse])
 async def get_upcoming_reservations(
     window_hours: int = Query(48, ge=1, le=168),
@@ -38,4 +34,8 @@ async def check_availability(
     time: datetime = Query(...),
     service: RestaurantService = Depends(get_restaurant_service)
 ):
-    return await service.check_table_availability(table_type_id, time)
+    # ¡AQUÍ ESTÁ LA MAGIA! Atrapamos el error del servicio y devolvemos un 404
+    try:
+        return await service.check_table_availability(table_type_id, time)
+    except ValueError as e:
+        raise HTTPException(status_code=404, detail=str(e))
