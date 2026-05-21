@@ -3,17 +3,7 @@ echo "Aplicando migraciones del sistema..."
 python manage.py migrate --noinput
 
 echo "Creando superusuario automáticamente..."
-python manage.py shell <<EOF
-import os
-from django.contrib.auth import get_user_model
-User = get_user_model()
-username = os.environ.get('DJANGO_SUPERUSER_USERNAME', 'admin')
-email = os.environ.get('DJANGO_SUPERUSER_EMAIL', 'admin@startup.com')
-password = os.environ.get('DJANGO_SUPERUSER_PASSWORD', 'adminpass')
-if not User.objects.filter(username=username).exists():
-    User.objects.create_superuser(username, email, password)
-    echo "Superusuario creado con éxito."
-EOF
+python manage.py shell -c "from django.contrib.auth import get_user_model; User = get_user_model(); User.objects.filter(username='admin').exists() or User.objects.create_superuser('admin', 'admin@example.com', 'adminpass')"
 
 echo "Ejecutando sembrado de datos (Seeding)..."
 python manage.py seed_data

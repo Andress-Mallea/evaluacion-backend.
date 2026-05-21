@@ -42,7 +42,7 @@ class TableType(UUIDMixin, TimeStampedMixin):
 class MenuItem(UUIDMixin, TimeStampedMixin):
     restaurant = models.ForeignKey(Restaurant, on_delete=models.CASCADE, related_name='menu_items')
     name = models.CharField(_('name'), max_length=255)
-    price = models.DecimalField(_('price'), max_length=10, decimal_places=2)
+    price = models.DecimalField(max_digits=10, decimal_places=2)
 
     class Meta:
         db_table = '"content"."menu_item"'
