@@ -150,13 +150,19 @@ Ejecuta el comando multi-contenedor de Docker Compose para compilar e iniciar lo
 ```powershell
 docker compose up -d --build
 ```
-
-### 3. Sembrar la Base de Datos (Seeding)
-Una vez que todos los contenedores reporten un estado saludable (`healthy`), ejecuta el comando de Django para poblar la base de datos con restaurantes, menús y tipos de mesas reales:
+### 3.Inicializar la Base de Datos (Crear tablas):
+```powershell
+docker compose exec django-app python manage.py migrate
+```
+docker compose exec django-app python manage.py migrate
+### 4. Sembrar la Base de Datos (Seeding)
 ```powershell
 docker compose exec django-app python manage.py seed_data
 ```
-
+### 5.Crear usuario administrador
+```powershell
+docker compose exec django-app python manage.py createsuperuser
+```
 ---
 
 ## 🔗 Matriz de Acceso a Servicios y URLs
