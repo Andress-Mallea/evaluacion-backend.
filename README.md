@@ -101,7 +101,40 @@ erDiagram
         CharField full_name
     }
 ```
+## 🗺️ Arquitectura del Sistema (Diagrama C4 - Nivel de Contenedores)
 
+El siguiente diagrama ilustra la arquitectura de microservicios, mostrando cómo el tráfico es enrutado y cómo interactúan las diferentes capas de la aplicación respetando la separación de responsabilidades (Lectura vs Escritura).
+
+```mermaid
+C4Container
+    title Diagrama de Contenedores - Sistema de Reservas de Restaurantes
+
+    Person(cliente, "Cliente Final", "Navega por los restaurantes y hace reservas.")
+    Person(admin, "Administrador", "Gestiona menús, mesas y supervisa reservas.")
+
+    System_Boundary(c1, "Ecosistema Backend") {
+        Container(nginx, "API Gateway / Proxy", "Nginx", "Enruta el tráfico entrante al servicio correspondiente. Oculta la topología interna.")
+        
+        Container(fastapi, "Servicio de Lectura (Público)", "FastAPI, Python, AsyncPG", "Maneja peticiones asíncronas de alta concurrencia para menús y disponibilidad.")
+        
+        Container(django, "Servicio Core / Admin (Privado)", "Django, Python", "Maneja la lógica de negocio pesada, escrituras (reservas) y el panel de administración.")
+        
+        ContainerDb(redis, "Caché Volátil", "Redis", "Almacena temporalmente catálogos de restaurantes para protección contra lectura masiva.")
+        
+        ContainerDb(postgres, "Base de Datos Principal", "PostgreSQL", "Fuente central de la verdad. Mantiene la integridad referencial y las transacciones ACID.")
+    }
+
+    Rel(cliente, nginx, "Consulta disponibilidad y crea reservas", "HTTPS")
+    Rel(admin, nginx, "Configura el restaurante", "HTTPS")
+    
+    Rel(nginx, fastapi, "Enruta tráfico de lectura /api/v1/", "HTTP")
+    Rel(nginx, django, "Enruta tráfico de administración /admin/", "HTTP")
+    
+    Rel(fastapi, redis, "Lee/Escribe caché (Degradación Elegante)", "Redis Protocol")
+    Rel(fastapi, postgres, "Consultas de lectura rápidas (Async)", "TCP/IP")
+    
+    Rel(django, postgres, "Escrituras seguras y migraciones (Sync)", "TCP/IP")
+```
 ## 🚀 Instrucciones de Despliegue Rápido
 
 Sigue estos pasos en tu terminal (PowerShell o Bash) en la raíz del proyecto para levantar todo el ecosistema desde cero:
