@@ -79,11 +79,25 @@ class PostgresRestaurantRepository(RestaurantRepositoryInterface):
                 "menus": [dict(m) for m in menus],
                 "tables": [dict(t) for t in tables]
             }
+    async def get_restaurant_by_name(self, name: str) -> list:
+        async with self.pool.acquire() as conn:
+            return await conn.fetchrow(
+                "SELECT id, name, created FROM content.restaurant WHERE name ILIKE = $1 ORDER BY name LIMIT 50", 
+                f"%{name}%"
+            )
 
     async def search_restaurants(self, query: str) -> list:
         async with self.pool.acquire() as conn:
-            # ILIKE hace la búsqueda insensible a mayúsculas/minúsculas
+            #####query = """
+                #SELECT 
+                    #res.id, res.name, res.created, ty.name
+                #FROM content.restaurant res
+                #JOIN content.table_type ty ON r.restaurant_id = ty.restaurant_id
+                #JOIN content.menu_item me ON r.restaurant_id = me.restaurant_id
+                #WHERE res.name ILIKE $1 AND ty.name ILIKE $2 
+                #ORDER BY res.name LIMIT 50
+            #"""
             return await conn.fetch(
-                "SELECT id, name, created FROM content.restaurant WHERE name ILIKE $1 ORDER BY name LIMIT 50",
+                "SELECT id, name, created FROM content.restaurant WHERE name ILIKE $1 AND id ILIKE $2 ORDER BY name LIMIT 50",
                 f"%{query}%"
             )

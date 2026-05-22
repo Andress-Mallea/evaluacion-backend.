@@ -136,13 +136,4 @@ async def search_restaurants(
     """Búsqueda de texto en el nombre del restaurante."""
     return await service.search_restaurants(query)
 
-@router.get("/restaurants/{restaurant_id}", response_model=RestaurantDetailResponse)
-async def get_restaurant(
-    restaurant_id: str,
-    service: RestaurantService = Depends(get_restaurant_service)
-):
-    """Obtiene un restaurante y su data hija (mesas y menús)."""
-    try:
-        return await service.get_restaurant_detail(restaurant_id)
-    except ValueError as e:
-        raise HTTPException(status_code=404, detail=str(e))
+

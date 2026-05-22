@@ -220,3 +220,7 @@ Dado que FastAPI actúa como una API de solo lectura para el tráfico público m
 ### El Parrafo Final
 Bueno personalmente hablando si tuviera que estar orgulloso de algo de el desarrollo de este proyecto pues seria que siento que e aprendido haciendolo y que al menos a el tiempo que escribo esto en mi propia laptop funciona y cumple con lo que se pide.
 Ahora la cose que me pone menos feliz dentro de el proyecto desarrollado es principalmente el echo de cuanto e tenido que depender de la IA para resolver los problemas que e tenido el desarrollo y en especial durante la implementacion Django y FastApi. En base a la poca comprension que saque de las lecturas que hice de los docuemntos proveidos en clase. Si tuviera mas tiempo lo mas probable es que intentaria eliminar o simplificar codigo que se esta sobre complicando para lo que hace como tmabien cambiar algunos test para que sean mas coherentes segun mi persona
+## Defensa
+Bueno primeramente se me fue aignado el C4 Endpoint de busqueda de restaurantes por menus o nombre
+Se eligio por el como estaba esstructurada la base de datos que tenia que seria mas facil hacer la busqueda por medio del nombre
+Bueno lo que se hizo fue lo siguiente basadome en otros Apis que ya estaban desarrolladas en el sistema tales como 

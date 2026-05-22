@@ -58,7 +58,9 @@ class RestaurantService:
         if not restaurant:
             raise ValueError("Restaurant not found")
         return restaurant
-
+    async def get_restaurant_by_name(self, name: str) -> dict:
+        restaurant = await self.repo.get_restaurant_by_name(name)
+        return [dict(row) for row in restaurant]
     async def search_restaurants(self, query: str) -> list:
         rows = await self.repo.search_restaurants(query)
         return [dict(row) for row in rows]
