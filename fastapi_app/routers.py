@@ -5,7 +5,10 @@ from schemas import CapacityCheckResponse, ReservationDetailResponse
 from services import RestaurantService
 from repositories import PostgresRestaurantRepository
 from core.cache import RedisCache
-
+from schemas import (
+    CapacityCheckResponse, ReservationDetailResponse, 
+    PaginatedRestaurantResponse, RestaurantDetailResponse, RestaurantListResponse
+)
 router = APIRouter()
 
 def get_repo(request: Request) -> PostgresRestaurantRepository:
@@ -114,3 +117,32 @@ async def get_frontend_availability(
         ]
     except ValueError:
         return []
+    
+    
+@router.get("/restaurants/", response_model=PaginatedRestaurantResponse)
+async def list_restaurants(
+    page: int = Query(1, ge=1),
+    size: int = Query(10, ge=1, le=100),
+    service: RestaurantService = Depends(get_restaurant_service)
+):
+    """Lista todos los restaurantes con paginación."""
+    return await service.get_paginated_restaurants(page, size)
+
+@router.get("/restaurants/search/", response_model=List[RestaurantListResponse])
+async def search_restaurants(
+    query: str = Query(..., min_length=2, description="Texto a buscar"),
+    service: RestaurantService = Depends(get_restaurant_service)
+):
+    """Búsqueda de texto en el nombre del restaurante."""
+    return await service.search_restaurants(query)
+
+@router.get("/restaurants/{restaurant_id}", response_model=RestaurantDetailResponse)
+async def get_restaurant(
+    restaurant_id: str,
+    service: RestaurantService = Depends(get_restaurant_service)
+):
+    """Obtiene un restaurante y su data hija (mesas y menús)."""
+    try:
+        return await service.get_restaurant_detail(restaurant_id)
+    except ValueError as e:
+        raise HTTPException(status_code=404, detail=str(e))

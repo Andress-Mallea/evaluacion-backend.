@@ -2,6 +2,8 @@ from pydantic import BaseModel, Field
 from uuid import UUID
 from datetime import datetime
 from typing import List, Optional
+from pydantic import BaseModel, UUID4
+from decimal import Decimal
 
 class RestaurantListResponse(BaseModel):
     id: UUID
@@ -23,3 +25,30 @@ class ReservationDetailResponse(BaseModel):
     reservation_time: datetime
     status: str
     guests: List[str] = []
+class MenuItemSchema(BaseModel):
+    id: UUID4
+    name: str
+    price: Decimal
+
+class TableTypeSchema(BaseModel):
+    id: UUID4
+    name: str
+    capacity: int
+
+class RestaurantListResponse(BaseModel):
+    id: UUID4
+    name: str
+    created: datetime
+
+class RestaurantDetailResponse(BaseModel):
+    id: UUID4
+    name: str
+    created: datetime
+    menus: List[MenuItemSchema] = []
+    tables: List[TableTypeSchema] = []
+
+class PaginatedRestaurantResponse(BaseModel):
+    total: int
+    page: int
+    size: int
+    results: List[RestaurantListResponse]

@@ -42,3 +42,48 @@ class PostgresRestaurantRepository(RestaurantRepositoryInterface):
             """
             rows = await conn.fetch(query, start_time, end_time)
             return [dict(row) for row in rows]
+    async def get_restaurants(self, limit: int, offset: int) -> list:
+        async with self.pool.acquire() as conn:
+            return await conn.fetch(
+                "SELECT id, name, created FROM content.restaurant ORDER BY created DESC LIMIT $1 OFFSET $2",
+                limit, offset
+            )
+
+    async def count_restaurants(self) -> int:
+        async with self.pool.acquire() as conn:
+            return await conn.fetchval("SELECT COUNT(*) FROM content.restaurant")
+
+    async def get_restaurant_by_id(self, restaurant_id: str) -> dict:
+        async with self.pool.acquire() as conn:
+            restaurant = await conn.fetchrow(
+                "SELECT id, name, created FROM content.restaurant WHERE id = $1", 
+                restaurant_id
+            )
+            if not restaurant:
+                return None
+            
+            menus = await conn.fetch(
+                "SELECT id, name, price FROM content.menu_item WHERE restaurant_id = $1", 
+                restaurant_id
+            )
+            
+            tables = await conn.fetch(
+                "SELECT id, name, capacity FROM content.table_type WHERE restaurant_id = $1", 
+                restaurant_id
+            )
+            
+            return {
+                "id": restaurant["id"],
+                "name": restaurant["name"],
+                "created": restaurant["created"],
+                "menus": [dict(m) for m in menus],
+                "tables": [dict(t) for t in tables]
+            }
+
+    async def search_restaurants(self, query: str) -> list:
+        async with self.pool.acquire() as conn:
+            # ILIKE hace la búsqueda insensible a mayúsculas/minúsculas
+            return await conn.fetch(
+                "SELECT id, name, created FROM content.restaurant WHERE name ILIKE $1 ORDER BY name LIMIT 50",
+                f"%{query}%"
+            )

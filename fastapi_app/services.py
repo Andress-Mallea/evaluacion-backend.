@@ -42,3 +42,23 @@ class RestaurantService:
         end_utc = end_local.astimezone(zoneinfo.ZoneInfo("UTC")).replace(tzinfo=None)
         
         return await self.repo.get_reservations_in_window(start_utc, end_utc)
+    async def get_paginated_restaurants(self, page: int, size: int) -> dict:
+        offset = (page - 1) * size
+        total = await self.repo.count_restaurants()
+        rows = await self.repo.get_restaurants(limit=size, offset=offset)
+        return {
+            "total": total,
+            "page": page,
+            "size": size,
+            "results": [dict(row) for row in rows]
+        }
+
+    async def get_restaurant_detail(self, restaurant_id: str) -> dict:
+        restaurant = await self.repo.get_restaurant_by_id(restaurant_id)
+        if not restaurant:
+            raise ValueError("Restaurant not found")
+        return restaurant
+
+    async def search_restaurants(self, query: str) -> list:
+        rows = await self.repo.search_restaurants(query)
+        return [dict(row) for row in rows]
