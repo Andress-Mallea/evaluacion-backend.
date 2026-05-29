@@ -1,0 +1,62 @@
+# ==========================================
+# Configuración del Examen - Datos Sensibles
+# ==========================================
+# ¡NUNCA SUBIR EL .ENV REAL AL REPOSITORIO! 
+.env
+.env.local
+.env.*.local
+
+# Archivo SQLite por si acaso se genera por error [cite: 231]
+*.sqlite3
+db.sqlite3
+
+# ==========================================
+# Entorno de Contenedores y Datos (Docker)
+# ==========================================
+# Ignorar directorios de datos locales montados por Docker
+.docker/
+postgres_data/
+redis_data/
+django_static/
+
+# ==========================================
+# Archivos de Python (Caché y Compilación)
+# ==========================================
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+.venv/
+pip-log.txt
+pip-delete-this-directory.txt
+.toast
+.SPIES
+.caches/
+.pytest_cache/
+.coverage
+htmlcov/
+
+# ==========================================
+# Archivos del Sistema Operativo (Windows/Mac)
+# ==========================================
+Thumbs.db
+Ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# ==========================================
+# IDEs y Editores de Código
+# ==========================================
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.swp
