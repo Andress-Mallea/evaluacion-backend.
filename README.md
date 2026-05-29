@@ -59,6 +59,7 @@ erDiagram
     RESTAURANT ||--o{ TABLE_TYPE : "has"
     RESTAURANT ||--o{ MENU_ITEM : "offers"
     RESTAURANT ||--o{ RESERVATION : "receives"
+    RESTAURANT ||--o{ TURN : "operates"
     TABLE_TYPE ||--o{ RESERVATION : "is booked for"
     RESERVATION ||--o{ RESERVATION_GUEST : "includes"
 
@@ -67,6 +68,9 @@ erDiagram
         DateTimeField created
         DateTimeField modified
         CharField name
+        TextField description
+        CharField cuisine
+        CharField price_range
     }
     TABLE_TYPE {
         UUID id PK
@@ -83,6 +87,17 @@ erDiagram
         UUID restaurant_id FK
         CharField name
         DecimalField price
+        CharField course
+        JSONField allergens
+    }
+    TURN {
+        UUID id PK
+        DateTimeField created
+        DateTimeField modified
+        UUID restaurant_id FK
+        CharField name
+        TimeField start_time
+        TimeField end_time
     }
     RESERVATION {
         UUID id PK
