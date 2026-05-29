@@ -5,6 +5,8 @@ from schemas import CapacityCheckResponse, ReservationDetailResponse
 from services import RestaurantService
 from repositories import PostgresRestaurantRepository
 from core.cache import RedisCache
+from datetime import date
+from typing import Optional
 from schemas import (
     CapacityCheckResponse, ReservationDetailResponse, 
     PaginatedRestaurantResponse, RestaurantDetailResponse, RestaurantListResponse
@@ -78,7 +80,15 @@ async def get_frontend_menu(date: date_type = Query(...)):
             "allergens": ["Lácteos"]
         }
     ]
-
+@router.get("/restaurants/{restaurant_id}/details", response_model=RestaurantDetailResponse)
+async def get_restaurant_details(
+    restaurant_id: str,
+    service: RestaurantService = Depends(get_restaurant_service)
+):
+    try:
+        return await service.get_restaurant_detail(restaurant_id)
+    except ValueError as e:
+        raise HTTPException(status_code=404, detail=str(e))
 
 @router.get("/reservations/availability/")
 async def get_frontend_availability(
@@ -127,13 +137,62 @@ async def list_restaurants(
 ):
     """Lista todos los restaurantes con paginación."""
     return await service.get_paginated_restaurants(page, size)
-
-@router.get("/restaurants/search/", response_model=List[RestaurantListResponse])
-async def search_restaurants(
-    query: str = Query(..., min_length=2, description="Texto a buscar"),
-    service: RestaurantService = Depends(get_restaurant_service)
+#C2
+@router.get("/restaurants/{restaurant_id}/menu")
+async def get_menu(
+    restaurant_id: str,
+    date: date,
+    exclude_allergens: Optional[str] = None,
+    group_by: Optional[str] = None,
+    service=Depends(get_restaurant_service)
 ):
-    """Búsqueda de texto en el nombre del restaurante."""
-    return await service.search_restaurants(query)
-
+    try:
+        result = await service.get_restaurant_menu(
+            restaurant_id=restaurant_id, 
+            target_date=date, 
+            exclude_allergens_str=exclude_allergens, 
+            group_by=group_by
+        )
+        return result
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+#C3
+@router.get("/restaurants/{restaurant_id}/turns")
+async def get_turns(
+    restaurant_id: str,
+    date: date,
+    tz: str = "America/La_Paz", # Usamos una zona horaria por defecto realista
+    service=Depends(get_restaurant_service)
+):
+    try:
+        result = await service.get_turns_availability(restaurant_id, date, tz)
+        return result
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+#C4
+@router.get("/restaurants/search/")
+async def search_restaurants(
+    query: str,
+    cuisine: Optional[str] = None,
+    price_range: Optional[str] = None,
+    service = Depends(get_restaurant_service)
+):
+    try:
+        result = await service.search_restaurants(query, cuisine, price_range)
+        return result
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+#C5
+@router.get("/restaurants/popular")
+async def get_popular_restaurants(
+    period: str = "7d",
+    tz: str = "America/La_Paz",
+    include: Optional[str] = None,
+    service = Depends(get_restaurant_service)
+):
+    try:
+        result = await service.get_popular_restaurants(period, tz, include)
+        return result
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 

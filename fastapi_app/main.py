@@ -2,7 +2,7 @@ import asyncpg
 import redis.asyncio as redis
 from fastapi import FastAPI, Response
 from routers import router
-
+from config import settings
 app = FastAPI(
     title="API de Restaurantes Examen", 
     docs_url="/api/openapi",        
@@ -11,10 +11,9 @@ app = FastAPI(
 
 @app.on_event("startup")
 async def startup():
-    app.state.db_pool = await asyncpg.create_pool(
-        dsn="postgres://app_user:secure_password_here@db:5432/restaurant_db"
-    )
-    app.state.redis_client = redis.from_url("redis://redis:6379/0")
+    db_url = f"postgres://{settings.POSTGRES_USER}:{settings.POSTGRES_PASSWORD}@{settings.POSTGRES_HOST}:{settings.POSTGRES_PORT}/{settings.POSTGRES_DB}"
+    app.state.db_pool = await asyncpg.create_pool(dsn=db_url)
+    app.state.redis_client = redis.from_url(settings.REDIS_URL)
 
 @app.on_event("shutdown")
 async def shutdown():

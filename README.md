@@ -223,4 +223,6 @@ Ahora la cose que me pone menos feliz dentro de el proyecto desarrollado es prin
 ## Defensa
 Bueno primeramente se me fue aignado el C4 Endpoint de busqueda de restaurantes por menus o nombre
 Se eligio por el como estaba esstructurada la base de datos que tenia que seria mas facil hacer la busqueda por medio del nombre
-Bueno lo que se hizo fue lo siguiente basadome en otros Apis que ya estaban desarrolladas en el sistema tales como 
+Bueno lo que se hizo fue lo siguiente basadome en otros Apis que ya estaban desarrolladas en el sistema tales como el get de restaurantes por medio del Id Y en base a ese query se desarrollo uno similar para que solo busque por medio de los nombres, luego de eso en base a esa Api se le intentaron implemetar los los filtros y desde eso la api comenzo a fallar y intente arreglarlar para que pueda funcionar solo con los nombres pero se quedo atascada con un error 500. 
+Lo que falto fue la implementaicon de los filtros extras para la busqueda
+El como lo ubiera echo es siguiendo el camino que ya tenia en base a las otras apis y se puede ver en modo comentario el como estaba haciendo el query personalizado para la busqueda con los filtros extra

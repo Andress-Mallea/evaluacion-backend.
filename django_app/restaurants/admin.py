@@ -1,6 +1,6 @@
 from django.contrib import admin
 from .models import Restaurant, TableType, MenuItem, Reservation, ReservationGuest
-
+from .models import Turn
 class TableTypeInline(admin.TabularInline):
     model = TableType
     extra = 1
@@ -25,7 +25,12 @@ class ReservationAdmin(admin.ModelAdmin):
     list_filter = ('status', 'reservation_time', 'restaurant')
     search_fields = ('id', 'restaurant__name')
     inlines = [ReservationGuestInline]
-
-admin.site.register(TableType)
+@admin.register(TableType)
+class TableTypeAdmin(admin.ModelAdmin):
+    list_display = ('name', 'capacity', 'restaurant')
+    search_fields = ('name',)
 admin.site.register(MenuItem)
 admin.site.register(ReservationGuest)
+@admin.register(Turn)
+class TurnAdmin(admin.ModelAdmin):
+    list_display = ('name', 'restaurant', 'start_time', 'end_time', 'is_closed')
